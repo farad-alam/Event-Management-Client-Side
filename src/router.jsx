@@ -7,6 +7,7 @@ import Events from './pages/Events'
 import AddEvent from './pages/AddEvent'
 import MyEvents from './pages/MyEvents'
 import ProtectedRoute from './components/ProtectedRoute'
+import PublicRoute from './components/PublicRoute'
 
 export const router = createBrowserRouter([
   {
@@ -14,20 +15,46 @@ export const router = createBrowserRouter([
     element: <Layout />,
     children: [
       { index: true, element: <Home /> },
-      { path: "login", element: <Login /> },
-      { path: "register", element: <Register /> },
+      {
+        path: "login",
+        element: (
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        ),
+      },
+      {
+        path: "register",
+        element: (
+          <PublicRoute>
+            <Register />
+          </PublicRoute>
+        ),
+      },
       {
         path: "events",
-        element: <ProtectedRoute><Events /></ProtectedRoute>
+        element: (
+          <ProtectedRoute>
+            <Events />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "add-event",
-        element: <ProtectedRoute><AddEvent /></ProtectedRoute>
+        element: (
+          <ProtectedRoute>
+            <AddEvent />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "my-events",
-        element: <ProtectedRoute><MyEvents /></ProtectedRoute>
+        element: (
+          <ProtectedRoute>
+            <MyEvents />
+          </ProtectedRoute>
+        ),
       },
-    ]
-  }
-])
+    ],
+  },
+]);

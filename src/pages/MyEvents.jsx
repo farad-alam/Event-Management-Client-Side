@@ -19,7 +19,7 @@ const MyEvents = () => {
   const fetchMyEvents = async () => {
     try {
       const myevents = await fetchEventsByUserID(user.id);
-      console.log("Fetch events", myEvents);
+      // console.log("Fetch events", myEvents);
       if (!myevents.success) {
         setLoading(false);
         return;

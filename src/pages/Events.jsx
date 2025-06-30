@@ -24,9 +24,16 @@ const Events = () => {
       const response = await fetch(
         `${import.meta.env.VITE_ROOT_URL}/api/events`
       );
-      const data = await response.json()
-      console.log(data);
-      setEvents(data.events)
+      const data = await response.json();
+
+      // Sort events by date and time in descending order
+      const sortedEvents = data.events.sort((a, b) => {
+        const dateTimeA = new Date(`${a.date}T${a.time}`);
+        const dateTimeB = new Date(`${b.date}T${b.time}`);
+        return dateTimeB - dateTimeA; 
+      });
+      // console.log(data);
+      setEvents(sortedEvents);
     } catch (error) {
       console.error('Error fetching events:', error)
     } finally {
@@ -34,60 +41,60 @@ const Events = () => {
     }
   }
 
-  const filterEvents = () => {
-    let filtered = [...events]
+  // const filterEvents = () => {
+  //   let filtered = [...events]
     
-    // Apply search filter
-    if (searchTerm) {
-      filtered = filtered.filter(event =>
-        event.title.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    }
+  //   // Apply search filter
+  //   if (searchTerm) {
+  //     filtered = filtered.filter(event =>
+  //       event.title.toLowerCase().includes(searchTerm.toLowerCase())
+  //     )
+  //   }
 
-    // Apply date filter
-    const today = new Date()
-    const currentWeekStart = new Date(today.setDate(today.getDate() - today.getDay()))
-    const lastWeekStart = new Date(currentWeekStart)
-    lastWeekStart.setDate(lastWeekStart.getDate() - 7)
-    const currentMonthStart = new Date(today.getFullYear(), today.getMonth(), 1)
-    const lastMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1)
-    const lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0)
+  //   // Apply date filter
+  //   const today = new Date()
+  //   const currentWeekStart = new Date(today.setDate(today.getDate() - today.getDay()))
+  //   const lastWeekStart = new Date(currentWeekStart)
+  //   lastWeekStart.setDate(lastWeekStart.getDate() - 7)
+  //   const currentMonthStart = new Date(today.getFullYear(), today.getMonth(), 1)
+  //   const lastMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1)
+  //   const lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0)
 
-    switch (filterOption) {
-      case 'today':
-        const todayStr = new Date().toISOString().split('T')[0]
-        filtered = filtered.filter(event => event.date === todayStr)
-        break
-      case 'current-week':
-        filtered = filtered.filter(event => {
-          const eventDate = new Date(event.date)
-          return eventDate >= currentWeekStart && eventDate <= new Date()
-        })
-        break
-      case 'last-week':
-        filtered = filtered.filter(event => {
-          const eventDate = new Date(event.date)
-          return eventDate >= lastWeekStart && eventDate < currentWeekStart
-        })
-        break
-      case 'current-month':
-        filtered = filtered.filter(event => {
-          const eventDate = new Date(event.date)
-          return eventDate >= currentMonthStart
-        })
-        break
-      case 'last-month':
-        filtered = filtered.filter(event => {
-          const eventDate = new Date(event.date)
-          return eventDate >= lastMonthStart && eventDate <= lastMonthEnd
-        })
-        break
-      default:
-        break
-    }
+  //   switch (filterOption) {
+  //     case 'today':
+  //       const todayStr = new Date().toISOString().split('T')[0]
+  //       filtered = filtered.filter(event => event.date === todayStr)
+  //       break
+  //     case 'current-week':
+  //       filtered = filtered.filter(event => {
+  //         const eventDate = new Date(event.date)
+  //         return eventDate >= currentWeekStart && eventDate <= new Date()
+  //       })
+  //       break
+  //     case 'last-week':
+  //       filtered = filtered.filter(event => {
+  //         const eventDate = new Date(event.date)
+  //         return eventDate >= lastWeekStart && eventDate < currentWeekStart
+  //       })
+  //       break
+  //     case 'current-month':
+  //       filtered = filtered.filter(event => {
+  //         const eventDate = new Date(event.date)
+  //         return eventDate >= currentMonthStart
+  //       })
+  //       break
+  //     case 'last-month':
+  //       filtered = filtered.filter(event => {
+  //         const eventDate = new Date(event.date)
+  //         return eventDate >= lastMonthStart && eventDate <= lastMonthEnd
+  //       })
+  //       break
+  //     default:
+  //       break
+  //   }
 
-    setFilteredEvents(filtered)
-  }
+  //   setFilteredEvents(filtered)
+  // }
 
   // const handleJoinEvent = async (eventId) => {
   //   try {
@@ -109,6 +116,85 @@ const Events = () => {
   //     console.error('Error joining event:', error)
   //   }
   // }
+
+  const filterEvents = () => {
+    let filtered = [...events];
+
+    if (searchTerm) {
+      filtered = filtered.filter((event) =>
+        event.title.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    const now = new Date();
+    const todayStr = now.toISOString().split("T")[0];
+
+    const today = new Date();
+    const currentWeekStart = new Date(today);
+    currentWeekStart.setDate(today.getDate() - today.getDay());
+
+    const currentWeekEnd = new Date(currentWeekStart);
+    currentWeekEnd.setDate(currentWeekEnd.getDate() + 6);
+
+    const lastWeekStart = new Date(currentWeekStart);
+    lastWeekStart.setDate(lastWeekStart.getDate() - 7);
+    const lastWeekEnd = new Date(currentWeekStart);
+    lastWeekEnd.setDate(lastWeekEnd.getDate() - 1);
+
+    const currentMonthStart = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      1
+    );
+    const lastMonthStart = new Date(
+      today.getFullYear(),
+      today.getMonth() - 1,
+      1
+    );
+    const lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0);
+
+    switch (filterOption) {
+      case "today":
+        filtered = filtered.filter(
+          (event) => event.date.split("T")[0] === todayStr
+        );
+        break;
+
+      case "current-week":
+        filtered = filtered.filter((event) => {
+          const eventDate = new Date(event.date);
+          return eventDate >= currentWeekStart && eventDate <= currentWeekEnd;
+        });
+        break;
+
+      case "last-week":
+        filtered = filtered.filter((event) => {
+          const eventDate = new Date(event.date);
+          return eventDate >= lastWeekStart && eventDate <= lastWeekEnd;
+        });
+        break;
+
+      case "current-month":
+        filtered = filtered.filter((event) => {
+          const eventDate = new Date(event.date);
+          return eventDate >= currentMonthStart;
+        });
+        break;
+
+      case "last-month":
+        filtered = filtered.filter((event) => {
+          const eventDate = new Date(event.date);
+          return eventDate >= lastMonthStart && eventDate <= lastMonthEnd;
+        });
+        break;
+
+      default:
+        break;
+    }
+
+    setFilteredEvents(filtered);
+  };
+  
 
 
   const handleJoinEvent = async (eventId) => {

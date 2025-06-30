@@ -206,7 +206,6 @@ const EventCard = ({ event, onJoin, onUpdate, onDelete, showActions = false }) =
             {event.title}
           </h2>
           <div className="btn btn-secondary btn-sm ">
-            
             <small>{event.attendeeCount} attending</small>
           </div>
         </div>
@@ -214,10 +213,7 @@ const EventCard = ({ event, onJoin, onUpdate, onDelete, showActions = false }) =
         <div className="flex items-center gap-2 mb-3">
           <div className="avatar">
             <div className="w-8 h-8 rounded-full">
-              <img
-                src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=32&h=32&fit=crop"
-                alt={event.name}
-              />
+              <img src={event.userId.photoURL} alt={event.name} />
             </div>
           </div>
           <span className="text-sm text-base-content/70 font-medium">

@@ -18,23 +18,23 @@ const Home = () => {
   const fetchData = async () => {
     try {
       const [eventsRes, usersRes] = await Promise.all([
-        fetch('/data/events.json'),
-        fetch('/data/users.json')
-      ])
+        fetch(`${import.meta.env.VITE_ROOT_URL}/api/events`),
+        fetch(`${import.meta.env.VITE_ROOT_URL}/api/users`),
+      ]);
       
       const events = await eventsRes.json()
       const users = await usersRes.json()
       
       const today = new Date()
-      const upcomingEvents = events.filter(event => new Date(event.date) >= today)
+      const upcomingEvents = events.events.filter(event => new Date(event.date) >= today)
       
       setStats({
-        totalEvents: events.length,
-        totalUsers: users.length,
+        totalEvents: events.count,
+        totalUsers: users.count,
         upcomingEvents: upcomingEvents.length
       })
       
-      setFeaturedEvents(events.slice(0, 3))
+      setFeaturedEvents(events.events.slice(0, 3))
     } catch (error) {
       console.error('Error fetching data:', error)
     }
