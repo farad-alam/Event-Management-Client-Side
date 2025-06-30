@@ -65,8 +65,10 @@ const Register = () => {
     try {
       const userData = {
         ...formData,
-        photoURL: formData.photoURL || 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop'
-      }
+        photoURL:
+          formData.photoURL ||
+          "https://img.freepik.com/premium-vector/male-face-avatar-icon-set-flat-design-social-media-profiles_1281173-3806.jpg",
+      };
 
       const result = await register(userData)
       
