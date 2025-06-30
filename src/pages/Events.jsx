@@ -89,27 +89,71 @@ const Events = () => {
     setFilteredEvents(filtered)
   }
 
+  // const handleJoinEvent = async (eventId) => {
+  //   try {
+  //     const updatedEvents = events.map(event => {
+  //       if (event.id === eventId) {
+  //         const isAlreadyJoined = event.attendees?.includes(user.id)
+  //         if (!isAlreadyJoined) {
+  //           return {
+  //             ...event,
+  //             attendeeCount: event.attendeeCount + 1,
+  //             attendees: [...(event.attendees || []), user.id]
+  //           }
+  //         }
+  //       }
+  //       return event
+  //     })
+  //     setEvents(updatedEvents)
+  //   } catch (error) {
+  //     console.error('Error joining event:', error)
+  //   }
+  // }
+
+
   const handleJoinEvent = async (eventId) => {
     try {
-      const updatedEvents = events.map(event => {
-        if (event.id === eventId) {
-          const isAlreadyJoined = event.attendees?.includes(user.id)
-          if (!isAlreadyJoined) {
-            return {
-              ...event,
-              attendeeCount: event.attendeeCount + 1,
-              attendees: [...(event.attendees || []), user.id]
-            }
-          }
+      const response = await fetch(
+        `${import.meta.env.VITE_ROOT_URL}/api/events/${eventId}/attendees`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: user.id }),
         }
-        return event
-      })
-      setEvents(updatedEvents)
-    } catch (error) {
-      console.error('Error joining event:', error)
-    }
-  }
+      );
 
+      const data = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: data.error || "Join Failed",
+          message: data.message || "Unable to join event",
+        };
+      }
+
+      // Update event in UI
+      // const updatedEvents = events.map((event) =>
+      //   event.id === eventId ? data.event : event
+      // );
+      // setEvents(updatedEvents);
+      // console.log(events);
+      await fetchEvents()
+
+      return {
+        success: true,
+        event: data.event,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: "Network Error",
+        message: "Failed to join the event due to a network error.",
+      };
+    }
+  };
+  
+  
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">

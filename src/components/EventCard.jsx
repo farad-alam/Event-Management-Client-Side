@@ -24,40 +24,40 @@ const EventCard = ({ event, onJoin, onUpdate, onDelete, showActions = false }) =
     })
   }
 
-  const handleJoin = async () => {
-    if (event.attendees?.includes(user.id)) {
-      Swal.fire({
-        icon: 'info',
-        title: 'Already Joined',
-        text: 'You have already joined this event!',
-        confirmButtonColor: '#3B82F6',
-      })
-      return
-    }
+  // const handleJoin = async () => {
+  //   if (event.attendees?.includes(user.id)) {
+  //     Swal.fire({
+  //       icon: 'info',
+  //       title: 'Already Joined',
+  //       text: 'You have already joined this event!',
+  //       confirmButtonColor: '#3B82F6',
+  //     })
+  //     return
+  //   }
 
-    const result = await Swal.fire({
-      title: 'Join Event?',
-      text: `Do you want to join "${event.title}"?`,
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonColor: '#3B82F6',
-      cancelButtonColor: '#6B7280',
-      confirmButtonText: 'Yes, join!',
-      cancelButtonText: 'Cancel'
-    })
+  //   const result = await Swal.fire({
+  //     title: 'Join Event?',
+  //     text: `Do you want to join "${event.title}"?`,
+  //     icon: 'question',
+  //     showCancelButton: true,
+  //     confirmButtonColor: '#3B82F6',
+  //     cancelButtonColor: '#6B7280',
+  //     confirmButtonText: 'Yes, join!',
+  //     cancelButtonText: 'Cancel'
+  //   })
 
-    if (result.isConfirmed) {
-      onJoin(event.id)
-      Swal.fire({
-        icon: 'success',
-        title: 'Joined Successfully!',
-        text: `You have successfully joined "${event.title}"`,
-        confirmButtonColor: '#3B82F6',
-        timer: 2000,
-        timerProgressBar: true
-      })
-    }
-  }
+  //   if (result.isConfirmed) {
+  //     onJoin(event.id)
+  //     Swal.fire({
+  //       icon: 'success',
+  //       title: 'Joined Successfully!',
+  //       text: `You have successfully joined "${event.title}"`,
+  //       confirmButtonColor: '#3B82F6',
+  //       timer: 2000,
+  //       timerProgressBar: true
+  //     })
+  //   }
+  // }
 
   // const handleDelete = async () => {
   //   const result = await Swal.fire({
@@ -93,6 +93,66 @@ const EventCard = ({ event, onJoin, onUpdate, onDelete, showActions = false }) =
   //     })
   //   }
   // }
+
+
+  const handleJoin = async () => {
+    if (event.attendees?.includes(user.id)) {
+      return Swal.fire({
+        icon: "info",
+        title: "Already Joined",
+        text: "You have already joined this event!",
+        confirmButtonColor: "#3B82F6",
+      });
+    }
+
+    const result = await Swal.fire({
+      title: "Join Event?",
+      text: `Do you want to join "${event.title}"?`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3B82F6",
+      cancelButtonColor: "#6B7280",
+      confirmButtonText: "Yes, join!",
+      cancelButtonText: "Cancel",
+    });
+
+    if (result.isConfirmed) {
+      const response = await onJoin(event.id); // wait for API result
+
+      if (!response.success) {
+        let message = "Something went wrong while joining.";
+
+        // Customize based on known errors
+        if (response.error === "User is already an attendee") {
+          message = "You have already joined this event!";
+        } else if (response.error === "User not found") {
+          message = "User account not found. Please login again.";
+        } else if (response.error === "Event not found") {
+          message = "This event no longer exists.";
+        }
+
+        return Swal.fire({
+          icon: "error",
+          title: response.error || "Join Failed",
+          text: message,
+          confirmButtonColor: "#3B82F6",
+          timer: 2500,
+          timerProgressBar: true,
+        });
+      }
+
+      // If successful
+      Swal.fire({
+        icon: "success",
+        title: "Joined Successfully!",
+        text: `You have successfully joined "${response.event.title}"`,
+        confirmButtonColor: "#3B82F6",
+        timer: 2000,
+        timerProgressBar: true,
+      });
+    }
+  };
+  
   const handleDelete = async () => {
     const result = await Swal.fire({
       title: "Delete Event?",
