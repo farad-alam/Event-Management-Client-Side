@@ -193,13 +193,13 @@ const Login = () => {
               </div>
             </form>
 
-            <div className="divider">Demo Accounts</div>
+            {/* <div className="divider">Demo Accounts</div>
             <div className="bg-base-200 p-4 rounded-lg text-sm">
               <p className="font-semibold mb-2">Try these demo accounts:</p>
               <p><strong>Email:</strong> john@example.com</p>
               <p><strong>Email:</strong> sarah@example.com</p>
               <p className="text-xs text-base-content/60 mt-2">Use any password for demo accounts</p>
-            </div>
+            </div> */}
           </div>
         </div>
       </motion.div>
