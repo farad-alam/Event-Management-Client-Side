@@ -59,31 +59,79 @@ const EventCard = ({ event, onJoin, onUpdate, onDelete, showActions = false }) =
     }
   }
 
+  // const handleDelete = async () => {
+  //   const result = await Swal.fire({
+  //     title: 'Delete Event?',
+  //     text: `Are you sure you want to delete "${event.title}"? This action cannot be undone.`,
+  //     icon: 'warning',
+  //     showCancelButton: true,
+  //     confirmButtonColor: '#EF4444',
+  //     cancelButtonColor: '#6B7280',
+  //     confirmButtonText: 'Yes, delete it!',
+  //     cancelButtonText: 'Cancel'
+  //   })
+
+  //   if (result.isConfirmed) {
+  //     const response = await onDelete(event.id)
+  //     if (!response.success) {
+  //       Swal.fire({
+  //         icon: "error",
+  //         title: `${response.error}`,
+  //         text: "Something Unexpected happend guring deletion",
+  //         confirmButtonColor: "#3B82F6",
+  //         timer: 2000,
+  //         timerProgressBar: true,
+  //       });
+  //     }
+  //     Swal.fire({
+  //       icon: 'success',
+  //       title: 'Deleted!',
+  //       text: 'Event has been deleted successfully.',
+  //       confirmButtonColor: '#3B82F6',
+  //       timer: 2000,
+  //       timerProgressBar: true
+  //     })
+  //   }
+  // }
   const handleDelete = async () => {
     const result = await Swal.fire({
-      title: 'Delete Event?',
+      title: "Delete Event?",
       text: `Are you sure you want to delete "${event.title}"? This action cannot be undone.`,
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#EF4444',
-      cancelButtonColor: '#6B7280',
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'Cancel'
-    })
+      confirmButtonColor: "#EF4444",
+      cancelButtonColor: "#6B7280",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    });
 
     if (result.isConfirmed) {
-      onDelete(event.id)
-      Swal.fire({
-        icon: 'success',
-        title: 'Deleted!',
-        text: 'Event has been deleted successfully.',
-        confirmButtonColor: '#3B82F6',
-        timer: 2000,
-        timerProgressBar: true
-      })
-    }
-  }
+      const response = await onDelete(event.id);
 
+      if (!response.success) {
+        return Swal.fire({
+          icon: "error",
+          title: response.error || "Deletion Failed",
+          text:
+            response.message ||
+            "Something unexpected happened during deletion.",
+          confirmButtonColor: "#3B82F6",
+          timer: 2500,
+          timerProgressBar: true,
+        });
+      }
+
+      Swal.fire({
+        icon: "success",
+        title: "Deleted!",
+        text: "Event has been deleted successfully.",
+        confirmButtonColor: "#3B82F6",
+        timer: 2000,
+        timerProgressBar: true,
+      });
+    }
+  };
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
