@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import EventCard from '../components/EventCard'
 import EventModal from '../components/EventModal'
 import { useAuth } from '../contexts/AuthContext'
+import { fetchEventsByUserID } from '../lib/eventData'
 
 const MyEvents = () => {
   const [myEvents, setMyEvents] = useState([])
@@ -17,15 +18,13 @@ const MyEvents = () => {
 
   const fetchMyEvents = async () => {
     try {
-      const response = await fetch('/data/events.json')
-      const allEvents = await response.json()
-      
-      // Filter events created by the current user
-      const userEvents = allEvents.filter(event => event.userId === user.id)
-      
-      // Sort by date (most recent first)
-      const sortedEvents = userEvents.sort((a, b) => new Date(b.date) - new Date(a.date))
-      setMyEvents(sortedEvents)
+      const myevents = await fetchEventsByUserID(user.id)
+      console.log("Fetch events",myEvents);
+      if (!myevents.success) {
+        setLoading(false)
+        return
+      }
+      setMyEvents(myevents.events);
     } catch (error) {
       console.error('Error fetching my events:', error)
     } finally {
@@ -40,12 +39,27 @@ const MyEvents = () => {
 
   const handleSaveEvent = async (updatedEvent) => {
     try {
-      // In a real app, you would send this to your backend
-      // For now, we'll update the local state
-      const updatedEvents = myEvents.map(event =>
-        event.id === updatedEvent.id ? updatedEvent : event
-      )
-      setMyEvents(updatedEvents)
+      console.log(selectedEvent);
+      const response = await fetch(
+        `${import.meta.env.VITE_ROOT_URL}/api/events/${selectedEvent.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedEvent),
+        }
+      );
+      const result = await response.json();
+      if (result.success) {
+        fetchMyEvents()
+      }
+
+
+      // const updatedEvents = myEvents.map(event =>
+      //   event.id === updatedEvent.id ? updatedEvent : event
+      // )
+      // setMyEvents(updatedEvents)
     } catch (error) {
       console.error('Error updating event:', error)
       throw error

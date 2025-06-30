@@ -62,7 +62,7 @@ const EventModal = ({ isOpen, onClose, event, onSave }) => {
 
   return (
     <div className="modal modal-open">
-      <motion.div 
+      <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
@@ -71,10 +71,7 @@ const EventModal = ({ isOpen, onClose, event, onSave }) => {
       >
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-2xl font-bold text-primary">Update Event</h3>
-          <button 
-            onClick={onClose}
-            className="btn btn-sm btn-circle btn-ghost"
-          >
+          <button onClick={onClose} className="btn btn-sm btn-circle btn-ghost">
             ✕
           </button>
         </div>
@@ -101,8 +98,9 @@ const EventModal = ({ isOpen, onClose, event, onSave }) => {
               </label>
               <input
                 type="date"
+                min={new Date().toISOString().split("T")[0]}
                 name="date"
-                value={formData.date}
+                value={formData.date?.split("T")[0] || ""}
                 onChange={handleChange}
                 className="input input-bordered focus:input-primary"
                 required
@@ -152,11 +150,7 @@ const EventModal = ({ isOpen, onClose, event, onSave }) => {
           </div>
 
           <div className="modal-action">
-            <button
-              type="button"
-              onClick={onClose}
-              className="btn btn-ghost"
-            >
+            <button type="button" onClick={onClose} className="btn btn-ghost">
               Cancel
             </button>
             <button
@@ -170,7 +164,7 @@ const EventModal = ({ isOpen, onClose, event, onSave }) => {
                   Updating...
                 </>
               ) : (
-                'Update Event'
+                "Update Event"
               )}
             </button>
           </div>
@@ -178,7 +172,7 @@ const EventModal = ({ isOpen, onClose, event, onSave }) => {
       </motion.div>
       <div className="modal-backdrop" onClick={onClose}></div>
     </div>
-  )
+  );
 }
 
 export default EventModal

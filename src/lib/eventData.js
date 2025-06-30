@@ -1,3 +1,4 @@
+
 export const fetchEvents = async () => {
   try {
     const response = await fetch("/data/events.json");
@@ -42,4 +43,20 @@ export const createNewEvent = async (eventData) => {
     event: data.event,
   };
 };
+
+
+export const fetchEventsByUserID = async (userID) => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_ROOT_URL}/api/events/userid/${userID}`
+    );
+    const allEvents = await response.json();
+
+    return { success: true, events: allEvents.events };
+  } catch (error) {
+    console.error("Error fetching my events:", error);
+    return { success: false, error: error };
+  }
+};
+
 
